@@ -4,6 +4,10 @@ interface ContentProps{
     isTabBarOpen: boolean;
 }
 
+interface SaveButton{
+    isSaved: boolean
+}
+
 export const Container = styled.div`
 
 `;
@@ -17,6 +21,11 @@ export const Content = styled.div<ContentProps>`
     display: flex;
     flex-direction: row ;
 `;
+
+export const BackButton = styled.button`
+
+`;
+
 
 export const Poster = styled.img`
     width: 25rem;
@@ -55,8 +64,38 @@ export const MovieGenres = styled.div`
     
 `;
 
-export const MovieStreamings = styled.div`
+export const MovieInfoFooter = styled.div`
+    display: flex ;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+`;
 
+
+export const MovieStreamings = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start ;
+`;
+
+export const StreamingsBar = styled.div`
+    display:flex ;
+    flex-direction: row ;
+    align-items:center ;
+    justify-content: center;
+`;
+
+export const MovieStreamingsTitle = styled.h3`
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+`;
+
+
+export const StreamingLogo = styled.img`
+    width: 2.5rem;
+    height: auto;
+    border-radius: 10px;
+    margin-right: 0.25rem;
 `;
 
 export const MovieAvaliation = styled.div`
@@ -91,12 +130,12 @@ export const Footer = styled.div`
     margin-top: 3rem;
 `;
 
-export const SaveButton = styled.button`
+export const SaveButton = styled.button<SaveButton>`
     display: flex;
     align-items: center ;
     justify-content: center;
     padding: 0.75rem 4rem;
-    border: 2px solid  ${({ theme }) => theme.colors.title};
+    border: 2px solid  ${({ isSaved, theme }) => isSaved ? theme.colors.primary : theme.colors.title};
     border-radius: 999px;
     margin-left: 1rem ;
 `;

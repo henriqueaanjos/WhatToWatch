@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import { IoArrowRedo, IoBookmark, IoStar } from "react-icons/io5";
+import { IoArrowBack, IoArrowRedo, IoBookmark, IoBookmarkOutline, IoBookmarkSharp, IoStar } from "react-icons/io5";
 import Badge from "../../components/Badge";
 import Header from "../../components/Header";
 import TabBar from "../../components/TabBar";
@@ -13,13 +13,16 @@ import { filtersGenres } from "../../util/filters";
 import {
     Container,
     Content,
+    BackButton,
     Poster,
     MovieInfo,
     MovieTitle,
     MovieYear,
     MovieOverview,
     MovieGenres,
+    MovieInfoFooter,
     MovieStreamings,
+    StreamingLogo,
     MovieAvaliation,
     Rating,
     MovieRate,
@@ -28,10 +31,13 @@ import {
     SaveButton,
     ImdbButton,
     ImdbButtonTitle,
+    MovieStreamingsTitle,
+    StreamingsBar
 } from './styles'
 import 'react-circular-progressbar/dist/styles.css';
 import Head from "next/head";
 import { useTheme } from "styled-components";
+import { useRouter } from "next/router";
 
 
 interface MovieProps{
@@ -42,10 +48,60 @@ interface Filter{
     name: string,
     category: string
 }
+interface Provider{
+    display_priority: number,
+    logo_path: string,
+    provider_id: number,
+    provider_name: string
+}
+
+interface Providers{
+    rent?: Provider[],
+    buy?: Provider[],
+    flatrate?: Provider[]
+}
 
 export default function Movie({movie}: MovieProps){
     const [isTabBarOpen, setTabBarOpen] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
     const theme = useTheme();
+    const route = useRouter();
+
+    const moviesKey="@whattowatch:movies";
+
+    function handleGoBack(){
+        route.back();
+    }
+    function saveMovie(){
+        const old = localStorage.getItem(moviesKey);
+        const oldParsed = JSON.parse(old);
+        console.log('Filmes Salvos: '+ oldParsed);
+        if(oldParsed){
+            if(isSaved){
+                const newMovies = oldParsed.filter(oldMovie => oldMovie.id != movie.id);
+                localStorage.setItem(moviesKey, JSON.stringify(newMovies));
+                console.log('Filmes Salvos(1): '+ newMovies);
+            }else{
+                const newMovies = [...oldParsed, movie];
+                localStorage.setItem(moviesKey, JSON.stringify(newMovies));
+                console.log('Filmes Salvos(2): '+ newMovies);
+            }
+        }else{
+            const newMovies = [movie];
+            localStorage.setItem(moviesKey, JSON.stringify(newMovies));
+            console.log('Filmes Salvos(3): '+ newMovies);
+        }
+        setIsSaved(old => !old);
+    }
+    useEffect(() => {
+        const old = localStorage.getItem(moviesKey);
+        const oldParsed = JSON.parse(old);
+        if(oldParsed){
+            if(oldParsed.find(oldMovie => oldMovie.id === movie.id))
+                setIsSaved(true);
+        }
+        // localStorage.removeItem(moviesKey);
+    }, []);
 
     return(
         <>
@@ -56,6 +112,13 @@ export default function Movie({movie}: MovieProps){
             <Header/>
             <TabBar isOpen={isTabBarOpen} setIsOpen={setTabBarOpen}/>
             <Content isTabBarOpen={isTabBarOpen} >
+                <BackButton
+                    onClick={handleGoBack}
+                >
+                    <IoArrowBack
+                        size="1rem"
+                    />
+                </BackButton>
                 <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
                 <MovieInfo>
                     <MovieTitle>{movie.title}</MovieTitle>
@@ -68,17 +131,29 @@ export default function Movie({movie}: MovieProps){
                     }
                     </MovieGenres>
                     <MovieOverview>{movie.overview}</MovieOverview>
-                    <MovieAvaliation>
-                        <Rating>
-                            <MovieRate>{movie.vote_average}</MovieRate>
-                            <MovieMaxRate>/10</MovieMaxRate>
-                        </Rating>
-                        <IoStar
-                            size='1.5rem'
-                            color={theme.colors.star}
-                        />
-                    </MovieAvaliation>
-                    <MovieStreamings></MovieStreamings>
+                    <MovieInfoFooter>
+                        <MovieStreamings>
+                            <MovieStreamingsTitle>{movie.watch_providers.length === 0 ? "Filme Indisponível por enquanto":"Streamings Disponíveis:"} </MovieStreamingsTitle>
+                            <StreamingsBar>
+                            {movie.watch_providers.map(provider => 
+                                <StreamingLogo 
+                                    src={`https://image.tmdb.org/t/p/w300/${provider.logo_path}`}
+                                    alt={provider.provider_name}
+                                /> 
+                            )}
+                            </StreamingsBar>
+                        </MovieStreamings>
+                        <MovieAvaliation>
+                            <Rating>
+                                <MovieRate>{movie.vote_average}</MovieRate>
+                                <MovieMaxRate>/10</MovieMaxRate>
+                            </Rating>
+                            <IoStar
+                                size='1.5rem'
+                                color={theme.colors.star}
+                            />
+                        </MovieAvaliation>
+                    </MovieInfoFooter>
                     <Footer>
                         <ImdbButton href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank'>
                             <ImdbButtonTitle>Ver no Imdb</ImdbButtonTitle>
@@ -86,10 +161,17 @@ export default function Movie({movie}: MovieProps){
                                 size="2rem"
                             />
                         </ImdbButton>
-                        <SaveButton>
-                            <IoBookmark
+                        <SaveButton onClick={saveMovie} isSaved={isSaved}>
+                           { isSaved ?
+                           <IoBookmark
+                                size="2rem"
+                                color={theme.colors.primary}
+                           />
+                           :
+                           <IoBookmarkOutline
                                 size="2rem"
                             />
+                            }
                         </SaveButton>
                     </Footer>
                 </MovieInfo>
@@ -109,10 +191,41 @@ export default function Movie({movie}: MovieProps){
             language: 'pt-BR'
         }
     });
+    const wp = await TmdbAPI.get(`/movie/${id}/watch/providers`, {
+        params:{
+            api_key: process.env.TMDB_API_KEY
+        }
+    })
+    if(!!wp.data.results.BR){
+        const p : Providers = wp.data.results.BR;
+        const rent = [...(!!p.rent ? p.rent : [])];
+        const buy = [...(!!p.buy ? p.buy : [])];
+        const flatrate = [...(!!p.flatrate ? p.flatrate : [])];
+        const providers = [...flatrate, ...rent, ...buy]
+        const setProvider = new Set();
+        const watch_providers = providers.filter((provider) => {
+            const duplicatedProvider = setProvider.has(provider.provider_id);
+            setProvider.add(provider.provider_id);
+            return !duplicatedProvider;
+        });
 
+        return {
+            props:{
+                movie: {
+                    ...movie.data,
+                    watch_providers
+                }
+            }
+        }
+    }else{
+        
     return {
         props:{
-            movie: movie.data
+            movie: {
+                ...movie.data,
+                watch_providers: []
+            }
         }
+    }
     }
   }

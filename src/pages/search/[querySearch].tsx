@@ -60,35 +60,9 @@ interface SearchProps{
 export default function Search({querySearch,  movies, page, total_pages }: SearchProps) {
     const [isTabBarOpen, setIsTabBarOpen] = useState(false);
     const [isFilterOptionsOpen, setIsFilterOptionsOpen] = useState(false);
-    const [filters, setFilters] = useState<Filter[]>(filtersGenres.map(f => {return ({...f, active: false })}));
 
     const theme = useTheme();
 
-    function handleOpenFilterOptions(){
-        setIsFilterOptionsOpen(old => !old);
-    }
-
-    function handleSelectFilter(id: number){
-        const filtersChanged = filters.map(filter => filter);
-        const selectedFilter = filtersChanged.find(filter => filter.id === id);
-        if(selectedFilter){
-            selectedFilter.active = !selectedFilter.active;
-        }
-        setFilters([...filtersChanged]);
-    }
-    function handleSelectOrder(id: number){
-        const updatedFilters = filters.map(filter => filter);
-        const updateFilter = updatedFilters.find(filter => filter.id === id);
-        if(updateFilter){
-            updateFilter.active = !updateFilter.active;
-            updatedFilters.map(filter => {
-                if(filter.category === 'order' && filter.id != id){
-                    filter.active = false;
-                }
-            })
-        }
-        setFilters([...updatedFilters]);
-    }
 
     return (
     <Container>
@@ -96,16 +70,16 @@ export default function Search({querySearch,  movies, page, total_pages }: Searc
         <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
         <Content isTabBarOpen={isTabBarOpen} >
             <OptionsBar >
-                <Title>Movies</Title>
-                <FilterButton onClick={handleOpenFilterOptions}>
-                    <FilterButtonTitle>Filters</FilterButtonTitle>
-                    <IoChevronDown
+                <Title>"{querySearch}"</Title>
+                <FilterButton onClick={() => {}}>
+                    <FilterButtonTitle></FilterButtonTitle>
+                    {/* <IoChevronDown
                         color={theme.colors.title}
                         size="1.5rem"
-                    />
+                    /> */}
                 </FilterButton>
             </OptionsBar>
-            {isFilterOptionsOpen && 
+            {/* {isFilterOptionsOpen && 
                 <OptionsModal  isTabBarOpen={isTabBarOpen}>
                     <OptionsBar >
                         <Title>Movies</Title>
@@ -155,25 +129,27 @@ export default function Search({querySearch,  movies, page, total_pages }: Searc
                         </OrderByContent>
                     </ModalContent>
                 </OptionsModal>
-            }
+            } */}
             <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>
                 {movies.map(movie => 
-                    <MovieCard key={movie.id}>
-                        <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
-                        <MovieInfo>
-                            <MovieTitle>{movie.title}</MovieTitle>
-                            <MovieInfoFooter>
-                                <StarsAvg>
-                                    <Stars>{movie.vote_average}</Stars>
-                                    <StarsTotals>/10</StarsTotals>
-                                </StarsAvg>
-                                <IoStar
-                                    size="0.825rem"
-                                    color={theme.colors.star}
-                                />
-                            </MovieInfoFooter>
-                        </MovieInfo>
-                    </MovieCard>
+                    <Link href={`/movie/${movie.id}`}>
+                        <MovieCard key={movie.id}>
+                            <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
+                            <MovieInfo>
+                                <MovieTitle>{movie.title}</MovieTitle>
+                                <MovieInfoFooter>
+                                    <StarsAvg>
+                                        <Stars>{movie.vote_average}</Stars>
+                                        <StarsTotals>/10</StarsTotals>
+                                    </StarsAvg>
+                                    <IoStar
+                                        size="0.825rem"
+                                        color={theme.colors.star}
+                                    />
+                                </MovieInfoFooter>
+                            </MovieInfo>
+                        </MovieCard>
+                    </Link>
                 )}
             </MoviesContainer>
             <ContentFooter>

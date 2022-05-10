@@ -9,7 +9,7 @@ interface ButtonSecondaryProps{
 }
 
 export const Container = styled.div<ContainerProps>`
-    height: 202vh;
+    height: 100vh;//202vh;
     width:  ${({ isOpen }) => isOpen ? 14 : 4.5}rem;
     background-color:  ${({ theme }) => theme.colors.background} ;
 

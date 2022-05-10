@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { IoBookmark, IoFileTrayStacked, IoGrid, IoMenu} from 'react-icons/io5'
 import { useTheme } from 'styled-components';
@@ -12,18 +13,30 @@ import {
 interface TabBarOption{
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
+    openFilterBar?: () => void;
 }
 
-const TabBar = ({isOpen, setIsOpen}: TabBarOption) => {
+const TabBar = ({isOpen, setIsOpen, openFilterBar}: TabBarOption) => {
     const [hover, setHover] = useState(0);
     const theme = useTheme();
+    const router = useRouter();
 
     function handleOpen(){
         setIsOpen(!isOpen);
     }
 
+    function handleGoTo(path: string){
+        router.push(path);
+    }
+
     function handleChangeColorHover(id: number = 0){
         setHover(id);
+    }
+    function handleOpenFilterBar(){
+        if(router.asPath === '/')
+            openFilterBar();
+        else
+            router.push('/');
     }
 
     return(
@@ -39,7 +52,7 @@ const TabBar = ({isOpen, setIsOpen}: TabBarOption) => {
                 />
             </ButtonIcon>
             <IconsSecondary>
-                <ButtonIcon 
+                {/* <ButtonIcon 
                     onClick={() => {}} 
                     onMouseEnter={() => handleChangeColorHover(1)} 
                     onMouseLeave={() => handleChangeColorHover()}
@@ -49,9 +62,9 @@ const TabBar = ({isOpen, setIsOpen}: TabBarOption) => {
                         size="1.5rem"
                     />
                     {isOpen && <Label isHover={hover ===1} >Streaming</Label>}
-                </ButtonIcon>
+                </ButtonIcon> */}
                 <ButtonIcon 
-                    onClick={() => {}} 
+                    onClick={handleOpenFilterBar} 
                     onMouseEnter={() => handleChangeColorHover(2)} 
                     onMouseLeave={() => handleChangeColorHover()}
                 >
@@ -62,7 +75,7 @@ const TabBar = ({isOpen, setIsOpen}: TabBarOption) => {
                     {isOpen && <Label isHover={hover ===2}>Categories</Label>}
                 </ButtonIcon>
                 <ButtonIcon 
-                    onClick={() => {}} 
+                    onClick={() => handleGoTo('/saves')} 
                     onMouseEnter={() => handleChangeColorHover(3)} 
                     onMouseLeave={() => handleChangeColorHover()}
                 >

@@ -156,7 +156,7 @@ export default function Home() {
         
             <Container>
                 <Header/>
-                <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
+                <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen} openFilterBar={handleOpenFilterOptions}/>
                 <Content isTabBarOpen={isTabBarOpen} >
                     <OptionsBar >
                         <Title>Movies</Title>

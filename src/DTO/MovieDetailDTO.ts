@@ -17,5 +17,11 @@ export interface MovieDetailDTO{
     title: string,
     video: boolean,
     vote_average: number,
-    vote_count: number
+    vote_count: number,
+    watch_providers:{
+        display_priority: number,
+        logo_path: string,
+        provider_id: number,
+        provider_name: string
+    }[]
 }
