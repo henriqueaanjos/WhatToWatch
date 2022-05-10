@@ -10,16 +10,17 @@ import {
 interface BadgeProps{
     title: string,
     active?: boolean,
-    sm?: boolean 
+    sm?: boolean,
+    withouticon?: boolean 
 }
 
-const Badge = ({title, active = false, sm = false}: BadgeProps) => {
+const Badge = ({title, active = false, sm = false, withouticon = false}: BadgeProps) => {
     const theme = useTheme();
     
     return(
         <Container active={active} >
             <Title active={active} sm={sm}>{title}</Title>
-            {active && <IoClose
+            {active && !withouticon && <IoClose
                 color={theme.colors.primary}
                 size={sm ? "1rem" :"1.5rem"}
             />}

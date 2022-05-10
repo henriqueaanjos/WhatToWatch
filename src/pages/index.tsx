@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { IoArrowBack, IoArrowForward, IoChevronDown, IoChevronUp, IoStar } from 'react-icons/io5'
@@ -101,7 +101,8 @@ export default function Home() {
     }
 
     async function filterMovies(){
-        const genresSelected = filters.filter(filter => filter.category === 'genre').map(filter => filter.id).toString();
+        const genresSelected = filters.filter(filter => filter.category === 'genre' && filter.active).map(filter => filter.id).toString();
+        console.log(genresSelected);
         const movies = await TmdbAPI.get('/discover/movie', {
             params:{
                 api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
@@ -117,23 +118,23 @@ export default function Home() {
 
     async function orderMovies(){
         setPage(1);
-        const orderFilter = filters.find(order => order.category === 'order').id;
-        const param = orderFilter === 1 ? 'vote_average.desc' : orderFilter === 2 ? 'popularity.desc' : 'release_date.desc';
-        const movies = await TmdbAPI.get('/discover/movie', {
+        const orderFilter = filters.find(order => order.category === 'order' && order.active);    
+        const param = orderFilter ? orderFilter.id === 1 ? 'vote_average.desc' : orderFilter.id === 2 ? 'popularity.desc' : 'release_date.desc' : 'popularity.desc';
+        console.log(param);
+        const response = await TmdbAPI.get('/discover/movie', {
             params:{
                 api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
                 language: 'pt-BR',
                 sort_by: param,
-                page: 2
+                page
             }
-        });
-        console.log('Vai teia...');
-        setMovies(movies.data.results);
-        setTotalPages(movies.data.total_pages)
+        })
+        setMovies(response.data.results);
+        setTotalPages(response.data.total_pages);
     }
 
     async function getData(){
-        const movies = await TmdbAPI.get('/movie/popular', {
+        const movies = await TmdbAPI.get('/discover/movie', {
             params:{
                 api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
                 language: 'pt-BR',
@@ -145,113 +146,121 @@ export default function Home() {
     }
     useEffect(() => {
         getData();
-    })
+    },[])
 
     return (
-    <Container>
-        <Header/>
-        <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
-        <Content isTabBarOpen={isTabBarOpen} >
-            <OptionsBar >
-                <Title>Movies</Title>
-                <FilterButton onClick={handleOpenFilterOptions}>
-                    <FilterButtonTitle>Filters</FilterButtonTitle>
-                    <IoChevronDown
-                        color={theme.colors.title}
-                        size="1.5rem"
-                    />
-                </FilterButton>
-            </OptionsBar>
-            {isFilterOptionsOpen && 
-                <OptionsModal  isTabBarOpen={isTabBarOpen}>
+        <>
+            <Head>
+                <title>What to Watch</title>
+            </Head>        
+        
+            <Container>
+                <Header/>
+                <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
+                <Content isTabBarOpen={isTabBarOpen} >
                     <OptionsBar >
                         <Title>Movies</Title>
                         <FilterButton onClick={handleOpenFilterOptions}>
                             <FilterButtonTitle>Filters</FilterButtonTitle>
-                            <IoChevronUp
+                            <IoChevronDown
                                 color={theme.colors.title}
                                 size="1.5rem"
                             />
                         </FilterButton>
                     </OptionsBar>
-                    <SelectedFilters>
-                        {filters.filter(filter => filter.active).map(filter =>
-                            <BadgeButton onClick={() => handleSelectFilter(filter.id)}>
-                                <Badge 
-                                    title={filter.name}
-                                    active={filter.active}
-                                />
-                            </BadgeButton>
-                        )}
-                    </SelectedFilters>
-                    <ModalContent>
-                        <CategoriesContent>
-                            <ModalSubTitle>Genres</ModalSubTitle>
-                            <Categories>
-                                {
-                                    filters.filter(filter => filter.category==='genre' && filter.active === false).map(filter =>
-                                        <BadgeButton onClick={() => handleSelectFilter(filter.id)}>
-                                            <Badge 
-                                                title={filter.name} 
-                                                active={filter.active}/> 
-                                        </BadgeButton>   
-                                    )
-                                }
-                            </Categories>
-                        </CategoriesContent>
-                        <OrderByContent>
-                            <ModalSubTitle>Order By</ModalSubTitle>
-                            <OrderBy>
-                                {filters.filter(filter => filter.category === 'order').map(filter =>
-                                    <CheckBoxButton onClick={() => handleSelectOrder(filter.id)}>
-                                        <CheckBox active={filter.active} />
-                                        <CheckBoxLabel>{filter.name}</CheckBoxLabel>
-                                    </CheckBoxButton>
+                    {isFilterOptionsOpen && 
+                        <OptionsModal  isTabBarOpen={isTabBarOpen}>
+                            <OptionsBar >
+                                <Title>Movies</Title>
+                                <FilterButton onClick={handleOpenFilterOptions}>
+                                    <FilterButtonTitle>Filters</FilterButtonTitle>
+                                    <IoChevronUp
+                                        color={theme.colors.title}
+                                        size="1.5rem"
+                                    />
+                                </FilterButton>
+                            </OptionsBar>
+                            <SelectedFilters>
+                                {filters.filter(filter => filter.active).map(filter =>
+                                    <BadgeButton onClick={() => handleSelectFilter(filter.id)}>
+                                        <Badge 
+                                            title={filter.name}
+                                            active={filter.active}
+                                        />
+                                    </BadgeButton>
                                 )}
-                            </OrderBy>
-                        </OrderByContent>
-                    </ModalContent>
-                </OptionsModal>
-            }
-            <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>
-                {movies.map(movie => 
-                    <MovieCard key={movie.id}>
-                        <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
-                        <MovieInfo>
-                            <MovieTitle>{movie.title}</MovieTitle>
-                            <MovieInfoFooter>
-                                <StarsAvg>
-                                    <Stars>{movie.vote_average}</Stars>
-                                    <StarsTotals>/10</StarsTotals>
-                                </StarsAvg>
-                                <IoStar
-                                    size="0.825rem"
-                                    color={theme.colors.star}
-                                />
-                            </MovieInfoFooter>
-                        </MovieInfo>
-                    </MovieCard>
-                )}
-            </MoviesContainer>
-            <ContentFooter>
-                <ButtonPage disabled={page === 1} onClick={handlePrevPage}>
-                    <IoArrowBack 
-                        size="1.25rem"
-                        color={theme.colors.title}
-                    />
-                    <ButtonPageTitle>Prev</ButtonPageTitle>
-                </ButtonPage>
-                <PageCounter>{page}/{totalPages}</PageCounter>
-                <ButtonPage disabled={page === totalPages} onClick={handleNextPage}>
-                    <ButtonPageTitle>Next</ButtonPageTitle>
-                    <IoArrowForward 
-                        size="1.25rem"
-                        color={theme.colors.title}
-                    />
-                </ButtonPage>
-            </ContentFooter>
-        </Content>
-    </Container>
+                            </SelectedFilters>
+                            <ModalContent>
+                                <CategoriesContent>
+                                    <ModalSubTitle>Genres</ModalSubTitle>
+                                    <Categories>
+                                        {
+                                            filters.filter(filter => filter.category==='genre' && filter.active === false).map(filter =>
+                                                <BadgeButton onClick={() => handleSelectFilter(filter.id)}>
+                                                    <Badge 
+                                                        title={filter.name} 
+                                                        active={filter.active}/> 
+                                                </BadgeButton>   
+                                            )
+                                        }
+                                    </Categories>
+                                </CategoriesContent>
+                                <OrderByContent>
+                                    <ModalSubTitle>Order By</ModalSubTitle>
+                                    <OrderBy>
+                                        {filters.filter(filter => filter.category === 'order').map(filter =>
+                                            <CheckBoxButton onClick={() => handleSelectOrder(filter.id)}>
+                                                <CheckBox active={filter.active} />
+                                                <CheckBoxLabel>{filter.name}</CheckBoxLabel>
+                                            </CheckBoxButton>
+                                        )}
+                                    </OrderBy>
+                                </OrderByContent>
+                            </ModalContent>
+                        </OptionsModal>
+                    }
+                    <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>
+                        {movies.map(movie => 
+                            <Link href={`/movie/${movie.id}`}>
+                                <MovieCard key={movie.id}>
+                                    <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
+                                    <MovieInfo>
+                                        <MovieTitle>{movie.title}</MovieTitle>
+                                        <MovieInfoFooter>
+                                            <StarsAvg>
+                                                <Stars>{movie.vote_average}</Stars>
+                                                <StarsTotals>/10</StarsTotals>
+                                            </StarsAvg>
+                                            <IoStar
+                                                size={12}
+                                                color={theme.colors.star}
+                                            />
+                                        </MovieInfoFooter>
+                                    </MovieInfo>
+                                </MovieCard>
+                            </Link>
+                        )}
+                    </MoviesContainer>
+                    <ContentFooter>
+                        <ButtonPage disabled={page === 1} onClick={handlePrevPage}>
+                            <IoArrowBack 
+                                size="1.25rem"
+                                color={theme.colors.title}
+                            />
+                            <ButtonPageTitle>Prev</ButtonPageTitle>
+                        </ButtonPage>
+                        <PageCounter>{page}/{totalPages}</PageCounter>
+                        <ButtonPage disabled={page === totalPages} onClick={handleNextPage}>
+                            <ButtonPageTitle>Next</ButtonPageTitle>
+                            <IoArrowForward 
+                                size="1.25rem"
+                                color={theme.colors.title}
+                            />
+                        </ButtonPage>
+                    </ContentFooter>
+                </Content>
+            </Container>
+        </>
     )
   }
 

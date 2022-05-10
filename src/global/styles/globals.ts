@@ -44,5 +44,8 @@ export default createGlobalStyle`
     a{
         color:inherit;
         text-decoration: none;
+        :hover{
+            cursor: pointer
+        }
     }
 `;

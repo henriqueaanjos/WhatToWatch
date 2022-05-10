@@ -18,6 +18,7 @@ export const Container = styled.div<BadgeProps>`
     display: flex;
     align-items: center;
     justify-content: center ;
+    margin-right:.5rem ;
 `;
 
 export const Title = styled.h3<BadgeProps>`

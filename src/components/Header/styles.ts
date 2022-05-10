@@ -1,7 +1,10 @@
 import styled, { css } from 'styled-components';
 
+interface InputProps{
+    isFocused: boolean
+}
 
-export const Container = styled.div`
+export const Container = styled.form`
     ${css`
         width: calc(100% - 4.5rem);
     `};
@@ -20,20 +23,30 @@ export const Container = styled.div`
 export const Logo = styled.img`
     height: 2.5rem;
     width: auto ;
+    cursor: pointer;
+    transition: 0.2s height ;
+
+    &:hover{
+        height: 2.6rem;
+    }
 `;
 
-export const SearchBar = styled.input`
+export const SearchBar = styled.input<InputProps>`
     height: 2.5rem;
     width: 100%;
     margin-left: 6rem;
 
-    border:2px solid  ${({ theme }) => theme.colors.primary} ;
+    border:2px solid  ${({ isFocused, theme }) => isFocused ? theme.colors.primary : theme.colors.boxBackground } ;
     background-color:  transparent;
     border-radius: 30px;
     padding: 0 1rem;
 
     color:  ${({ theme }) => theme.colors.primary};
     font-size: 1.5rem;
+
+    &::placeholder{
+        color:  ${({ theme }) => theme.colors.boxBackground}
+    }
 `;
 
 export const ButtonSearch = styled.button`

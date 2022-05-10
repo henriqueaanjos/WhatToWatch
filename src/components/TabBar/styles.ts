@@ -4,6 +4,10 @@ interface ContainerProps{
     isOpen: boolean
 }
 
+interface ButtonSecondaryProps{
+    isHover: boolean
+}
+
 export const Container = styled.div<ContainerProps>`
     height: 202vh;
     width:  ${({ isOpen }) => isOpen ? 14 : 4.5}rem;
@@ -34,7 +38,8 @@ export const IconsSecondary = styled.div`
     padding: 0 0.5rem;
 `;
 
-export const Label = styled.h4`
+export const Label = styled.h4<ButtonSecondaryProps>`
     margin-left: 3.5rem;
     font-size: 1.5rem ;
+    color: ${({ isHover, theme }) => isHover ? theme.colors.primary : theme.colors.title} ;
 `;

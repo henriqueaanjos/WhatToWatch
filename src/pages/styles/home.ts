@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 
 interface ContentProps{
     isTabBarOpen: boolean;
-    
 }
 interface OptionsBarProps{
     isFilterOptionsOpen: boolean;
@@ -110,7 +109,7 @@ export const Categories = styled.div`
 
     flex-wrap: wrap;
 
-    gap: 0.5rem ;
+    row-gap: 0.5rem ;
 `;
 
 export const OrderByContent = styled.div`
@@ -156,13 +155,14 @@ export const MoviesContainer = styled.div<OptionsBarProps>`
 export const MovieCard = styled.div`
     margin: 0 1rem;
     margin-bottom: 1rem ;
-    
+    cursor: pointer;
+    border-radius: 5px ;
 `;
 
 export const Poster = styled.img`
     width: 13.175rem;
     height: 18.75rem;
-
+    border: 5px 0 5px 0 ;
 `;
 
 export const MovieTitle = styled.h3`
@@ -180,6 +180,7 @@ export const MovieInfo = styled.div`
     flex-direction: column ;
     align-items: center;
     justify-content: space-around;
+    border-radius: 0 0 10px 10px;
 `;
 
 export const MovieInfoFooter = styled.div`

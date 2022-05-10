@@ -15,41 +15,62 @@ interface TabBarOption{
 }
 
 const TabBar = ({isOpen, setIsOpen}: TabBarOption) => {
+    const [hover, setHover] = useState(0);
     const theme = useTheme();
 
     function handleOpen(){
         setIsOpen(!isOpen);
     }
 
+    function handleChangeColorHover(id: number = 0){
+        setHover(id);
+    }
+
     return(
         <Container isOpen={isOpen}>
-            <ButtonIcon onClick={handleOpen}>
+            <ButtonIcon 
+                onClick={handleOpen}
+                onMouseEnter={() => handleChangeColorHover(4)} 
+                onMouseLeave={() => handleChangeColorHover()}
+            >
                 <IoMenu
-                    color={theme.colors.title}
+                    color={hover === 4 ? '#c4c4c4' : theme.colors.title}
                     size="2.5rem"
                 />
             </ButtonIcon>
             <IconsSecondary>
-                <ButtonIcon onClick={() => {}}>
+                <ButtonIcon 
+                    onClick={() => {}} 
+                    onMouseEnter={() => handleChangeColorHover(1)} 
+                    onMouseLeave={() => handleChangeColorHover()}
+                >
                     <IoFileTrayStacked
-                        color={theme.colors.title}
+                        color={hover === 1 ? theme.colors.primary : theme.colors.title}
                         size="1.5rem"
                     />
-                    {isOpen && <Label>Streaming</Label>}
+                    {isOpen && <Label isHover={hover ===1} >Streaming</Label>}
                 </ButtonIcon>
-                <ButtonIcon onClick={() => {}}>
+                <ButtonIcon 
+                    onClick={() => {}} 
+                    onMouseEnter={() => handleChangeColorHover(2)} 
+                    onMouseLeave={() => handleChangeColorHover()}
+                >
                     <IoGrid
-                        color={theme.colors.title}
+                        color={hover === 2 ? theme.colors.primary : theme.colors.title}
                         size="1.5rem"
                     />
-                    {isOpen && <Label>Categories</Label>}
+                    {isOpen && <Label isHover={hover ===2}>Categories</Label>}
                 </ButtonIcon>
-                <ButtonIcon onClick={() => {}}>
+                <ButtonIcon 
+                    onClick={() => {}} 
+                    onMouseEnter={() => handleChangeColorHover(3)} 
+                    onMouseLeave={() => handleChangeColorHover()}
+                >
                     <IoBookmark
-                        color={theme.colors.title}
+                        color={hover === 3 ? theme.colors.primary : theme.colors.title}
                         size="1.5rem"
                     />
-                    {isOpen && <Label>Saves</Label>}
+                    {isOpen && <Label isHover={hover ===3}>Saves</Label>}
                 </ButtonIcon>
             </IconsSecondary>   
         </Container>
