@@ -1,12 +1,14 @@
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { IoArrowBack, IoArrowForward, IoChevronDown, IoChevronUp, IoStar } from 'react-icons/io5'
+import { IoArrowBack, IoArrowForward, IoBookmark, IoChevronDown, IoChevronUp, IoStar } from 'react-icons/io5'
 import { useTheme } from 'styled-components'
 import Badge from '../../components/Badge'
 import CheckBox from '../../components/CheckBox'
 import Header from '../../components/Header'
 import TabBar from '../../components/TabBar'
+// import TabBar from '../../components/TabBar'
 import { MovieDetailDTO } from '../../DTO/MovieDetailDTO'
 import { MovieDTO } from '../../DTO/MovieDTO'
 import { OmdbAPI } from '../../services/apiOmdb'
@@ -42,7 +44,8 @@ import {
     ContentFooter,
     ButtonPage,
     ButtonPageTitle,
-    PageCounter
+    PageCounter,
+    PageType
 } from './../styles/home'
 
 
@@ -54,6 +57,7 @@ export default function Saves() {
     const moviesKey="@whattowatch:movies";
 
     const theme = useTheme();
+    const route = useRouter();
 
     async function getData(){
         const data = localStorage.getItem(moviesKey);
@@ -63,24 +67,38 @@ export default function Saves() {
         }
     }
 
+    function handleChangeMenuVisibility(){
+        setIsTabBarOpen(old => !old);
+    }
+
+    function handleGoBack(){
+        route.push('/')
+    }
+
     useEffect(() => {
         getData();
     }, []);
 
     return (
     <Container>
-        <Header/>
-        <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
+        <Header changeMenuVisibility={handleChangeMenuVisibility} isTabBarActive={isTabBarOpen}/>
+        {isTabBarOpen && <TabBar />}
         <Content isTabBarOpen={isTabBarOpen} >
             <OptionsBar >
-                <Title>Meus Filmes Salvos</Title>
-                <FilterButton onClick={() => {}}>
+                <PageType>
+                    <IoBookmark
+                        size="2rem"
+                        color={theme.colors.primary}
+                    />
+                    <Title>My save Movies</Title>
+                </PageType>
+                {/* <FilterButton onClick={() => {}}>
                     <FilterButtonTitle></FilterButtonTitle>
                     {/* <IoChevronDown
                         color={theme.colors.title}
                         size="1.5rem"
-                    /> */}
-                </FilterButton>
+                    /> 
+                </FilterButton> */}
             </OptionsBar>
         
             <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>

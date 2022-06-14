@@ -1,45 +1,39 @@
 import styled from 'styled-components';
 
-interface ContainerProps{
-    isOpen: boolean
+interface HoverProps{
+    isHover: boolean,
 }
 
-interface ButtonSecondaryProps{
-    isHover: boolean
-}
-
-export const Container = styled.div<ContainerProps>`
-    height: 100vh;//202vh;
-    width:  ${({ isOpen }) => isOpen ? 14 : 4.5}rem;
+export const Container = styled.div`
+    height: 100vh;
     background-color:  ${({ theme }) => theme.colors.background} ;
 
-    /* border-right: 1px solid  ${({ theme }) => theme.colors.shape} ; */
-
-    padding: 2rem 1rem;
+    padding: 1rem 0.825rem;
 
     display: flex;
     flex-direction: column;
 
-    position:  absolute;
+    position:  fixed;
+    z-index: 9;
+    margin-top: 3.85rem ;
 `;
 
 export const ButtonIcon = styled.button`
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     justify-content: flex-start;
+    gap: 0.25rem ;
 `;
 
-export const IconsSecondary = styled.div`
+export const Icons = styled.div`
     display: flex;
     flex-direction: column;
     gap: 30px;
-    margin-top: 4.5rem;
     padding: 0 0.5rem;
 `;
 
-export const Label = styled.h4<ButtonSecondaryProps>`
-    margin-left: 3.5rem;
-    font-size: 1.5rem ;
-    color: ${({ isHover, theme }) => isHover ? theme.colors.primary : theme.colors.title} ;
+export const Label = styled.h1<HoverProps>`
+    font-size: 0.75rem ;
+    color: ${({  isHover, theme }) => isHover ? theme.colors.primary : theme.colors.title} ;
 `;

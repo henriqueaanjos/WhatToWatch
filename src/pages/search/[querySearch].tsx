@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components'
 import Badge from '../../components/Badge'
 import CheckBox from '../../components/CheckBox'
 import Header from '../../components/Header'
-import TabBar from '../../components/TabBar'
+// import TabBar from '../../components/TabBar'
 import { MovieDTO } from '../../DTO/MovieDTO'
 import { OmdbAPI } from '../../services/apiOmdb'
 import { TmdbAPI } from '../../services/apiTmdb'
@@ -67,7 +67,7 @@ export default function Search({querySearch,  movies, page, total_pages }: Searc
     return (
     <Container>
         <Header/>
-        <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/>
+        {/* <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/> */}
         <Content isTabBarOpen={isTabBarOpen} >
             <OptionsBar >
                 <Title>"{querySearch}"</Title>

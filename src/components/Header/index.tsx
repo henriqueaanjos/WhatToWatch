@@ -1,48 +1,42 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { IoSearch } from 'react-icons/io5';
+import { IoMenu, IoSearch } from 'react-icons/io5';
 import { useTheme } from 'styled-components'
+import SearchBar from '../SearchBar';
+// import TabBar from '../TabBar';
 
 import {
     Container,
+    Content,
+    MenuButton,
     Logo,
-    SearchBar,
-    ButtonSearch
 } from './styles';
 
-const Header = () => {
-    const theme = useTheme();
-    const [search, setSearch] = useState(''); 
-    const [inputFocus, setInputFocus] = useState(false);
-    const router = useRouter();
+interface HeaderProps{
+    changeMenuVisibility: () => void;
+    isTabBarActive: boolean,
+    onSearch: (query: string) => void;
+}
 
-    function handleChangeFocus(){
-        setInputFocus(old => !old);
-    }
+const Header = ({changeMenuVisibility, isTabBarActive, onSearch}:HeaderProps) => {
+    const theme = useTheme();
 
     return(
-        <Container 
-        onSubmit={() => router.push(`/search/${search}`)}>
-            <Link href='/'>
-                <Logo src='/logo.svg'/>
-            </Link>
-            <SearchBar
-                placeholder='search Movie'
-                onChange={e => setSearch(e.target.value)}
-                value={search}
-                onFocus={handleChangeFocus}
-                isFocused={inputFocus || !!search}
-                onBlur={handleChangeFocus}
-            />
-            <Link href={`/search/${search}`}>
-                <ButtonSearch >
-                    <IoSearch
-                        color={inputFocus || !!search ? theme.colors.primary : theme.colors.boxBackground}
-                        size="1.5rem"
+        <Container isTabBarActive={isTabBarActive}>
+            <Content 
+            >
+                <MenuButton onClick={changeMenuVisibility}>
+                    <IoMenu
+                        size="2.5rem"
+                        color={theme.colors.title}
                     />
-                </ButtonSearch>
-            </Link>
+                </MenuButton>
+                <Link href='/'>
+                    <Logo src='/logo1.svg'/>
+                </Link>
+                <SearchBar onSearch={onSearch}/>
+            </Content>
         </Container>
     );
 }

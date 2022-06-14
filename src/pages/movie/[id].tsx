@@ -4,7 +4,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import { IoArrowBack, IoArrowRedo, IoBookmark, IoBookmarkOutline, IoBookmarkSharp, IoStar } from "react-icons/io5";
 import Badge from "../../components/Badge";
 import Header from "../../components/Header";
-import TabBar from "../../components/TabBar";
+// import TabBar from "../../components/TabBar";
 import { MovieDetailDTO } from "../../DTO/MovieDetailDTO";
 import { MovieDTO } from "../../DTO/MovieDTO";
 import { TmdbAPI } from "../../services/apiTmdb";
@@ -14,6 +14,7 @@ import {
     Container,
     Content,
     BackButton,
+    MovieBanner,
     Poster,
     MovieInfo,
     MovieTitle,
@@ -23,11 +24,11 @@ import {
     MovieInfoFooter,
     MovieStreamings,
     StreamingLogo,
-    MovieAvaliation,
+    MovieRating,
     Rating,
     MovieRate,
     MovieMaxRate,
-    Footer,
+    MovieFooter,
     SaveButton,
     ImdbButton,
     ImdbButtonTitle,
@@ -38,6 +39,8 @@ import 'react-circular-progressbar/dist/styles.css';
 import Head from "next/head";
 import { useTheme } from "styled-components";
 import { useRouter } from "next/router";
+import TabBar from "../../components/TabBar";
+import Footer from "../../components/Footer";
 
 
 interface MovieProps{
@@ -103,83 +106,91 @@ export default function Movie({movie}: MovieProps){
         // localStorage.removeItem(moviesKey);
     }, []);
 
+    function handleShowTabBar(){
+        setTabBarOpen(old => !old);
+    }
+
     return(
         <>
         <Head>
             <title>{movie.title}</title>
         </Head>
         <Container>
-            <Header/>
-            <TabBar isOpen={isTabBarOpen} setIsOpen={setTabBarOpen}/>
-            <Content isTabBarOpen={isTabBarOpen} >
-                <BackButton
+            <Header isTabBarActive={isTabBarOpen} changeMenuVisibility={handleShowTabBar}/>
+            { isTabBarOpen && <TabBar />}
+            <Content isTabBarOpen={isTabBarOpen}>
+                {/* <BackButton
                     onClick={handleGoBack}
                 >
                     <IoArrowBack
                         size="1rem"
                     />
-                </BackButton>
-                <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
-                <MovieInfo>
-                    <MovieTitle>{movie.title}</MovieTitle>
-                    <MovieYear>{new Date(movie.release_date).getFullYear()} - {Math.floor(movie.runtime/60)}:{movie.runtime%60 < 10 ?'0'+movie.runtime%60 : movie.runtime%60} hrs</MovieYear>
-                    <MovieGenres>
-                    {
-                        movie.genres.map(genre => (
-                            <Badge title={genre.name} active withouticon/>    
-                        ))
-                    }
-                    </MovieGenres>
-                    <MovieOverview>{movie.overview}</MovieOverview>
-                    <MovieInfoFooter>
-                        <MovieStreamings>
-                            <MovieStreamingsTitle>{movie.watch_providers.length === 0 ? "Filme Indisponível por enquanto":"Streamings Disponíveis:"} </MovieStreamingsTitle>
-                            <StreamingsBar>
-                            {movie.watch_providers.map(provider => 
-                                <StreamingLogo 
-                                    src={`https://image.tmdb.org/t/p/w300/${provider.logo_path}`}
-                                    alt={provider.provider_name}
-                                /> 
-                            )}
-                            </StreamingsBar>
-                        </MovieStreamings>
-                        <MovieAvaliation>
-                            <Rating>
-                                <MovieRate>{movie.vote_average}</MovieRate>
-                                <MovieMaxRate>/10</MovieMaxRate>
-                            </Rating>
-                            <IoStar
-                                size='1.5rem'
-                                color={theme.colors.star}
+                </BackButton> */}
+                <MovieBanner img={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}>
+                    <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
+                    <MovieInfo img={movie.backdrop_path}>
+                        <MovieTitle>{movie.title}</MovieTitle>
+                        <MovieYear>{new Date(movie.release_date).getFullYear()} - {Math.floor(movie.runtime/60)}:{movie.runtime%60 < 10 ?'0'+movie.runtime%60 : movie.runtime%60} hrs</MovieYear>
+                        <MovieGenres>
+                        {
+                            movie.genres.map(genre => (
+                                <Badge title={genre.name} active withouticon/>    
+                            ))
+                        }
+                        </MovieGenres>
+                        <MovieOverview>{movie.overview}</MovieOverview>
+                        <MovieInfoFooter>
+                            <MovieStreamings>
+                                <MovieStreamingsTitle>{movie.watch_providers.length === 0 ? "Filme Indisponível por enquanto":"Streamings Disponíveis:"} </MovieStreamingsTitle>
+                                <StreamingsBar>
+                                {movie.watch_providers.map(provider => 
+                                    <StreamingLogo 
+                                        src={`https://image.tmdb.org/t/p/w300/${provider.logo_path}`}
+                                        alt={provider.provider_name}
+                                    /> 
+                                )}
+                                </StreamingsBar>
+                            </MovieStreamings>
+                            <MovieRating>
+                                <Rating>
+                                    <MovieRate>{movie.vote_average}</MovieRate>
+                                    <MovieMaxRate>/10</MovieMaxRate>
+                                </Rating>
+                                <IoStar
+                                    size='1.5rem'
+                                    color={theme.colors.star}
+                                />
+                            </MovieRating>
+                        </MovieInfoFooter>
+                        <MovieFooter>
+                            <ImdbButton href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank'>
+                                <ImdbButtonTitle>Ver no Imdb</ImdbButtonTitle>
+                                <IoArrowRedo
+                                    size="2rem"
+                                />
+                            </ImdbButton>
+                            <SaveButton onClick={saveMovie} isSaved={isSaved}>
+                            { isSaved ?
+                            <IoBookmark
+                                    size="2rem"
+                                    color={theme.colors.primary}
                             />
-                        </MovieAvaliation>
-                    </MovieInfoFooter>
-                    <Footer>
-                        <ImdbButton href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank'>
-                            <ImdbButtonTitle>Ver no Imdb</ImdbButtonTitle>
-                            <IoArrowRedo
-                                size="2rem"
-                            />
-                        </ImdbButton>
-                        <SaveButton onClick={saveMovie} isSaved={isSaved}>
-                           { isSaved ?
-                           <IoBookmark
-                                size="2rem"
-                                color={theme.colors.primary}
-                           />
-                           :
-                           <IoBookmarkOutline
-                                size="2rem"
-                            />
-                            }
-                        </SaveButton>
-                    </Footer>
-                </MovieInfo>
+                            :
+                            <IoBookmarkOutline
+                                    size="2rem"
+                                />
+                                }
+                            </SaveButton>
+                        </MovieFooter>
+                    </MovieInfo>
+                </MovieBanner>
             </Content>
+            <Footer/>
         </Container>
         </>
     )
 }
+
 
   export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
     

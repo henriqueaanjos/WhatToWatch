@@ -2,7 +2,7 @@ import { darken } from 'polished';
 import styled, { css } from 'styled-components';
 
 interface ContentProps{
-    isTabBarOpen: boolean;
+    isTabBarOpen?: boolean;
 }
 interface OptionsBarProps{
     isFilterOptionsOpen: boolean;
@@ -12,15 +12,15 @@ interface ButtonProps{
 }
 
 export const Container = styled.div`
-
+    overflow-x: hidden;
 `;
 
 export const Content = styled.div<ContentProps>`
     width: 100vw;
-    /* height: 100vh; */
     background-color:  ${({ theme }) => theme.colors.background_secondary} ;
-    
-    padding: 8rem 4rem 0 ${({isTabBarOpen}) => isTabBarOpen ? 16 : 6.5}rem;
+     ${({ isTabBarOpen }) => isTabBarOpen && css`
+        margin-top: 3.875rem; 
+     `}; 
 `;
 
 export const OptionsBar = styled.div`
@@ -28,10 +28,11 @@ export const OptionsBar = styled.div`
     flex-direction: row;
     align-items:  flex-start;
     justify-content: space-between ;
+    padding: 1rem 2rem;
 `;
 
 export const Title = styled.h3`
-    font-size: 1.5rem;
+    font-size: 2rem;
 `;
 
 export const OptionsModal = styled.div<ContentProps>`
@@ -94,6 +95,11 @@ export const SelectedFilters = styled.div`
     flex-wrap: wrap;
 
     gap: 1rem ;
+    
+`;
+
+export const StreamingContent = styled.div`
+
 `;
 
 export const CategoriesContent = styled.div`
@@ -139,17 +145,15 @@ export const CheckBoxLabel = styled.h3`
 
 export const MoviesContainer = styled.div<OptionsBarProps>`
     width: 100%;
-    /* ${css`
-        height: calc(100vh - 10rem);
-    `} */
+    padding: 0 3rem;
     background-color:  ${({ theme }) => theme.colors.background_secondary} ;
     
     opacity:  ${({ isFilterOptionsOpen }) => isFilterOptionsOpen ? 0.2 : 1};
 
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(13.175rem, auto));
-    column-gap: 1rem ;
-    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(170px, auto));
+    row-gap: 1rem ;
+    column-gap: 0.5rem;
 `;
 
 export const MovieCard = styled.div`
@@ -244,3 +248,54 @@ export const ButtonPageTitle = styled.h3`
 export const PageCounter = styled.h3`
     font-size: 1.5rem;
 `;
+
+
+export const PageType = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+`;
+
+export const Options = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+export const FilterOptions = styled.div`
+    display: flex;
+    align-items: center;
+
+    padding: 0 1rem;
+    gap: 0.5rem;
+    cursor: pointer;
+`;
+
+export const OptionTitle = styled.h1`
+    font-size: 1.5rem;
+`;
+
+export const SortOptions = styled.div`
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    border-left: 2px solid  ${({ theme }) => theme.colors.primary} ;
+
+    gap: 0.5rem;
+    cursor: pointer;
+`;
+
+export const SortBy = styled.h2`
+    font-size: 1.5rem;
+    color:  ${({ theme }) => theme.colors.primary};
+`;
+
+export const MovieBanners = styled.div`
+    width: 100%;
+    padding: 0 3rem;
+    display: grid;
+    /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; */
+    grid-template-columns: repeat(auto-fit, minmax(170px, auto));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+`;
+

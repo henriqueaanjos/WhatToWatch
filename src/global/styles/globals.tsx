@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-export default createGlobalStyle`
+export const GlobalStyleConfig =  createGlobalStyle`
     * {
         margin: 0;
         padding: 0;
@@ -21,7 +21,7 @@ export default createGlobalStyle`
 
     body {
         -webkit-font-smoothing: antialiased !important;
-        background-color:  ${({ theme }) => theme.colors.background};
+        background-color:  #333337;
     }
 
     body html #root {
@@ -29,8 +29,9 @@ export default createGlobalStyle`
     }
 
     body, h1, h2, h3, h4, h5, h6, p, a, input, button, select, option {
-        color:  ${({ theme }) => theme.colors.title} ;
+        color:  #FFFFFF;
         font-family: 'Bebas Neue', cursive;
+        font-weight: 400;
     }
 
     button{
@@ -48,4 +49,14 @@ export default createGlobalStyle`
             cursor: pointer
         }
     }
+
 `;
+
+export const GlobalStyle = ({ children }: { children: any }) => {
+    return (
+      <>
+        <GlobalStyleConfig />
+        {children}
+      </>
+    );
+  };
