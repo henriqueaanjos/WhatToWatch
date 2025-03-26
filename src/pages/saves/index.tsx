@@ -46,7 +46,7 @@ import {
     ButtonPageTitle,
     PageCounter,
     PageType
-} from './../styles/home'
+} from '../../styles/home'
 
 
 export default function Saves() {
@@ -103,7 +103,7 @@ export default function Saves() {
         
             <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>
                 {movies.map(movie => 
-                    <Link href={`/movie/${movie.id}`}>
+                    <Link  key={movie.id} href={`/movie/${movie.id}`}>
                         <MovieCard key={movie.id}>
                             <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
                             <MovieInfo>

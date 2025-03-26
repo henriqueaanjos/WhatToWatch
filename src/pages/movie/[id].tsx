@@ -34,7 +34,7 @@ import {
     ImdbButtonTitle,
     MovieStreamingsTitle,
     StreamingsBar
-} from './styles'
+} from '../../styles/movie'
 import 'react-circular-progressbar/dist/styles.css';
 import Head from "next/head";
 import { useTheme } from "styled-components";
@@ -104,7 +104,7 @@ export default function Movie({movie}: MovieProps){
                 setIsSaved(true);
         }
         // localStorage.removeItem(moviesKey);
-    }, []);
+    }, [movie.id]);
 
     function handleShowTabBar(){
         setTabBarOpen(old => !old);
@@ -134,7 +134,7 @@ export default function Movie({movie}: MovieProps){
                         <MovieGenres>
                         {
                             movie.genres.map(genre => (
-                                <Badge title={genre.name} active withouticon/>    
+                                <Badge key={genre.id} title={genre.name} active withouticon/>    
                             ))
                         }
                         </MovieGenres>
@@ -145,6 +145,7 @@ export default function Movie({movie}: MovieProps){
                                 <StreamingsBar>
                                 {movie.watch_providers.map(provider => 
                                     <StreamingLogo 
+                                        key={provider.provider_id}
                                         src={`https://image.tmdb.org/t/p/w300/${provider.logo_path}`}
                                         alt={provider.provider_name}
                                     /> 

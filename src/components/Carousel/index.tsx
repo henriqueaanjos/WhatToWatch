@@ -60,7 +60,7 @@ const Carousel = () => {
            {
                data.map((mov, i) => {
                    return(
-                    <SwiperSlide>
+                    <SwiperSlide key={mov.id}>
                         <Link href={`/movie/${mov.id}`}>
                             <Item img={`https://image.tmdb.org/t/p/original/${mov.backdrop_path}`} active={activeIndex === i+1}>
                                 <Title>

@@ -115,7 +115,7 @@ const FilterBar = ({visibility, setVisibility, filter, order, orderStatus, reset
                     <Genres>
                         {
                             filtersGenres.filter(filter => filter.category === "genre").map(item => 
-                                <BadgeButton onClick={() => addGenres(item)}>
+                                <BadgeButton key={item.id} onClick={() => addGenres(item)}>
                                     <Badge 
                                         title={item.name} 
                                         active={!!selectGenres.find(genre => genre.id === item.id)}
@@ -144,6 +144,7 @@ const FilterBar = ({visibility, setVisibility, filter, order, orderStatus, reset
                         {
                             streamings.map(streaming => 
                                 <StreamingCover 
+                                    key={streaming.provider_id}
                                     src={`https://image.tmdb.org/t/p/w500${streaming.logo_path}`} 
                                     alt={streaming.provider_name} 
                                     active={!!selectStreaming.find(stream => stream.provider_id === streaming.provider_id)}

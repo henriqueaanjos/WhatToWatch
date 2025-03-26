@@ -42,7 +42,7 @@ import {
     ButtonPage,
     ButtonPageTitle,
     PageCounter
-} from './../styles/home'
+} from '../../styles/home'
 
 interface Filter{
     id: number,
@@ -66,11 +66,11 @@ export default function Search({querySearch,  movies, page, total_pages }: Searc
 
     return (
     <Container>
-        <Header/>
+        {/* <Header></Header> */}
         {/* <TabBar isOpen={isTabBarOpen} setIsOpen={setIsTabBarOpen}/> */}
         <Content isTabBarOpen={isTabBarOpen} >
             <OptionsBar >
-                <Title>"{querySearch}"</Title>
+                <Title>{querySearch}</Title>
                 <FilterButton onClick={() => {}}>
                     <FilterButtonTitle></FilterButtonTitle>
                     {/* <IoChevronDown
@@ -132,7 +132,7 @@ export default function Search({querySearch,  movies, page, total_pages }: Searc
             } */}
             <MoviesContainer isFilterOptionsOpen={isFilterOptionsOpen}>
                 {movies.map(movie => 
-                    <Link href={`/movie/${movie.id}`}>
+                    <Link key={movie.id} href={`/movie/${movie.id}`}>
                         <MovieCard key={movie.id}>
                             <Poster src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}/>
                             <MovieInfo>

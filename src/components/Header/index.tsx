@@ -16,7 +16,7 @@ import {
 interface HeaderProps{
     changeMenuVisibility: () => void;
     isTabBarActive: boolean,
-    onSearch: (query: string) => void;
+    onSearch?: (query: string) => void;
 }
 
 const Header = ({changeMenuVisibility, isTabBarActive, onSearch}:HeaderProps) => {

@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { IoArrowBack, IoArrowForward, IoChevronDown, IoChevronUp, IoClose, IoOptions, IoStar } from 'react-icons/io5'
 import { useTheme } from 'styled-components'
 import { threadId } from 'worker_threads'
@@ -59,7 +59,7 @@ import {
     SortOptions,
     SortBy,
     MovieBanners
-} from './styles/home'
+} from '../styles/home'
 
 
 
@@ -127,7 +127,7 @@ export default function Home() {
         setQuery('');
     }
 
-    async function getData(){
+    const getData = useCallback(async() => {
         const movies = await TmdbAPI.get('/discover/movie', {
             params:{
                 api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
@@ -141,9 +141,9 @@ export default function Home() {
         });
         setMovies([...movies.data.results]);
         setTotalPages(movies.data.total_pages);
-    }
+    }, [filterGenres, filterStreamings, sort, page]);
 
-    async function searchMovie(query: string){
+    const searchMovie = useCallback(async(query: string) =>{
         const movies = await TmdbAPI.get('/search/movie', {
             params:{
                 api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
@@ -155,7 +155,7 @@ export default function Home() {
         setQuery(query);
         setMovies([...movies.data.results]);
         setTotalPages(movies.data.total_pages);
-    }
+    }, [page]);
 
     function getTotalItemsGridLine(){
         const ScreenWidth = window.window.innerWidth;
@@ -180,11 +180,11 @@ export default function Home() {
             getData();
         }else
             searchMovie(query);
-    },[page]);
+    },[page, getData, query, searchMovie]);
 
     useEffect(() => {
         getData();
-    }, [filterGenres, filterStreamings, sort])
+    }, [filterGenres, filterStreamings, sort, getData])
 
     useEffect(() => {
         window.addEventListener('resize', getTotalItemsGridLine);
@@ -241,6 +241,7 @@ export default function Home() {
                     {movies.slice(0, 20%gridLine).map(movie =>
                         
                             <MovieCardMd
+                                key={movie.id}
                                 id={movie.id}
                                 backdrop_path={movie.backdrop_path}
                                 title={movie.title}
@@ -253,6 +254,7 @@ export default function Home() {
                         
                         {movies.slice(20%gridLine, movies.length).map(movie =>
                             <MovieCardSm
+                                key={movie.id}
                                 id={movie.id}
                                 poster_path={movie.poster_path}
                                 title={movie.title}

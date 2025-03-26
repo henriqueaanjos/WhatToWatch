@@ -25,7 +25,7 @@ const MovieCardMd = ({id, maxWidth=1000, backdrop_path, title, vote_average}: mo
     const theme = useTheme();
     useEffect(() => {
         console.log("MaxWidth:"+maxWidth);
-    }, [])
+    }, [maxWidth])
     return(
         <Link href={`/movie/${id}`}>
             <Container maxWidth={maxWidth}>
