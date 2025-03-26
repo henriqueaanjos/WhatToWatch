@@ -134,8 +134,8 @@ export default function Home() {
                 language: 'pt-BR',
                 page,
                 sort_by: sort,
-                with_genres: filterGenres != undefined && filterGenres.map(item => item.id).toString(),
-                with_watch_providers: filterStreamings != undefined && filterStreamings.map(item => item.provider_id).toString(),
+                with_genres: filterGenres != undefined && filterGenres.map(item => item.id).toString() || undefined,
+                with_watch_providers: filterStreamings != undefined && filterStreamings.map(item => item.provider_id).toString() || undefined,
                 watch_region: 'BR'
             }
         });
